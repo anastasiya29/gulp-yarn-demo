@@ -1,3 +1,4 @@
+/// <binding BeforeBuild='before-build' Clean='clean' />
 const gulp = require('gulp');
 const rollup = require('rollup-stream');
 const rollupConfig = require('./rollup.config');
@@ -5,6 +6,7 @@ const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const sourcemaps = require('gulp-sourcemaps');
 const rename = require('gulp-rename');
+const del = require("del");
 
 const paths = {
 	distributionJS: './dist',
@@ -34,4 +36,10 @@ gulp.task('publish-js', ['rollup'], () => {                   // define task nam
 
 gulp.task('watch-js', ['publish-js'], () => {                 // define task named 'watch-js' that depends on task 'publish-js'
 	gulp.watch(paths.sourceJS + '/**/*.js', ['publish-js']);  // watch all JS files in 'src' folder for changes; run 'publish-js' if changes are detected
+});
+
+gulp.task('before-build', ['publish-js']);
+
+gulp.task('clean', () => {
+	del([ paths.distributionJS + '/*.js', paths.distributionJS + '/*.map' ])
 });
